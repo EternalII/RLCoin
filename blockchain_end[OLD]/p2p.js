@@ -1,3 +1,4 @@
+const fs = require('fs');
 const topology = require('fully-connected-topology')
 const {
     stdin,
@@ -22,6 +23,8 @@ log('connecting to peers...')
 const myIp = toLocalIp(me)
 const peerIps = getPeerIps(peers)
 
+const RLCoin = new Blockchain.js();
+
 //connect to peers
 topology(myIp, peerIps).on('connection', (socket, peerIp) => {
     const peerPort = extractPortFromIp(peerIp)
@@ -33,6 +36,19 @@ topology(myIp, peerIps).on('connection', (socket, peerIp) => {
         if (message === 'exit') { //on exit
             log('Bye bye')
             exit(0)
+        }
+        else if (message === 'saveHistory') {
+            RLCoin.saveTransactionHistory();
+        }
+        else if (message === 'loadHistory') { 
+            RLCoin.loadTransactionHistory();
+        }
+        else if (sockets[receiverPeer]) { //message to specific peer
+            if (peerPort === receiverPeer) { //write only once
+                sockets[receiverPeer].write(formatMessage(extractMessageToSpecificPeer(message)))
+            }
+        } else { //broadcast message to everyone
+            socket.write(formatMessage(message))
         }
 
         const receiverPeer = extractReceiverPeer(message)
@@ -86,4 +102,26 @@ function extractReceiverPeer(message) {
 //'4000>hello' -> 'hello'
 function extractMessageToSpecificPeer(message) {
     return message.slice(5, message.length);
+}
+
+function saveListToFile(list, file) {
+    // console.log("received list to save: ", list);
+    const jsonified = JSON.stringify(list);
+    try {
+        fs.writeFileSync(file, jsonified);
+        // console.log("JSON data is saved to file:\n", jsonified);
+    } catch (error) {
+        console.error("Failed to save list due to: ", err);
+    }
+}
+
+function loadFileToList(file) {
+    // load JSON Object list
+    const objectList = JSON.parse(fs.readFileSync(file));
+    const listTrans = [];
+    //convert to strongly-typed transactions 
+    for (obj in objectList) {
+        listTrans.push(Transaction.class(objectList[obj]));
+    }
+    return listTrans;
 }
