@@ -1,0 +1,5 @@
+Your public key, and also your wallet address, free sharable 
+0459b4d517a2f35095328f57c1097254c0d9ca4ebfa3be3b11a6fbaf0cda69d72394ed1f36b31e5242d7e2f30920f2012cd19a52e7c262ab406d5422a5cecaaa6b
+
+Your private key - keep it secret, and also your wallet address 
+d1d4d453688c0e258b4b8bdc511ab2d3ea0a4f872366c73abd139177bc9e4376

@@ -151,6 +151,8 @@ class Blockchain {
     }
     return true;
   }
+
+  
 }
 
 module.exports.Blockchain = Blockchain;
